@@ -13,7 +13,7 @@ double MVN::prob_density(const Eigen::VectorXd& x) const{
 }
 
 Eigen::VectorXd MVN::sample(unsigned int iter_num) const{
-    double n = mean.rows();
+    int n = mean.rows();
 
         // Generate x from the N(0, I) distribution
     Eigen::VectorXd x(n);

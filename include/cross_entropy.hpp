@@ -3,6 +3,14 @@
 #include <Eigen/Dense>
 #include <Eigen/Core> // for using eigen in multithreads, run Eigen::initParallel() first.
 
+
+struct grid_policy {
+        //policy parameters
+    Eigen::VectorXd param;
+    double J;
+};
+
+
 void cross_entropy(const int n,
                    Eigen::VectorXd& theta,// initial mean parameter vector
                    Eigen::MatrixXd& cov,  // initial nxn covariance matrix

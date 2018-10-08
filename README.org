@@ -1,0 +1,12 @@
+* Dependencies
+1. Eigen
+2. CMake
+
+* How to Run
+
+#+BEGIN_SRC bash
+cd build
+cmake ..
+make
+./hw2
+#+END_SRC
