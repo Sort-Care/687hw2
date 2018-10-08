@@ -29,7 +29,10 @@ void hill_climbing(Eigen::VectorXd& theta,// Initial mean policy parameter vecto
                    );
 
 void eval_grid_policy(struct policy& po,
-                      const int num_trials);
+                      const int num_episodes);
+
+void eval_cart_pole_policy(struct policy& po,
+                           const int num_episodes);
 
 
 #endif
