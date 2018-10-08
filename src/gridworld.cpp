@@ -23,8 +23,9 @@
 #include <cmath>
 #include <algorithm>
 #include <Eigen/Dense>
+#include <iostream>
 
-#include "cross_entropy.hpp"
+#include "bbo.hpp"
 #include "multi_normal.hpp"
 #include "random_sampling.hpp"
 
@@ -211,23 +212,36 @@ int main(int argc, char *argv[]){
 
 
         // Define the covariance matrix and the mean
-    Eigen::MatrixXd sigma(2, 2);
-    sigma << 10.0, 7.0,
-        7.0, 5;
-    Eigen::VectorXd mean(2);
-    mean << 2, 2;
-    MVN mvn(mean, sigma);
+    // Eigen::MatrixXd sigma(2, 2);
+    // sigma << 10.0, 7.0,
+    //     7.0, 5;
+    // Eigen::VectorXd mean(2);
+    // mean << 2, 2;
+    // MVN mvn(mean, sigma);
 
-        // Sample a number of points
-    const unsigned int points = 1000;
-    Eigen::MatrixXd x(2, points);
-    Eigen::VectorXd vector(2);
-    for (unsigned i = 0; i < points; i++)
-    {
-        vector = mvn.sample(200);
-        x(0, i) = vector(0);
-        x(1, i) = vector(1);
-    }
+    //     // Sample a number of points
+    // const unsigned int points = 1000;
+    // Eigen::MatrixXd x(2, points);
+    // Eigen::VectorXd vector(2);
+    // for (unsigned i = 0; i < points; i++)
+    // {
+    //     vector = mvn.sample(200);
+    //     x(0, i) = vector(0);
+    //     x(1, i) = vector(1);
+    // }
+
+    Eigen::MatrixXd test(3,4);
+    test << 0,1,2,3,
+        2,3,4,5,
+        3,4,5,6;
+    
+
+    Eigen::VectorXd res(3);
+
+    res = test.col(1);
+    std::cout << res << std::endl;
+    
+    
 
     //     // Calculate the mean and convariance of the produces sampled points
     // Eigen::VectorXd approx_mean(2);

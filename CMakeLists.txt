@@ -6,7 +6,7 @@ find_package(Eigen3 3.3 REQUIRED NO_MODULE)
 include_directories(include)
 
 file(GLOB SOURCES "src/*.cpp")
-list(FILTER SOURCES EXCLUDE REGEX "^\\.#.*")
+list(FILTER SOURCES EXCLUDE REGEX "\\.#.*")
 
 add_executable(hw2 ${SOURCES})
 
