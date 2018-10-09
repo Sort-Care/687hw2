@@ -35,4 +35,7 @@ void get_standard_deviation(const double array[], const int size,
                             double *amean,
                             double *adevia);
 
+double run_gridworld_on_policy();
+
+
 #endif

@@ -1,5 +1,8 @@
 #include <Eigen/Dense>
 #include "bbo.hpp"
+#include "gird.hpp"
+
+
 /*
  * Class for comparing policies in the priority queue
  *
@@ -104,7 +107,13 @@ void hill_climbing(const int n,
  */
 void eval_grid_policy(struct policy& po,
                       const int num_episodes){
-    
+    po.J = 0.0;
+        // transfer policy parameter to a policy probability table
+
+        // loop: do N episodes
+    REP (i, 0, num_episodes-1){
+            //run the grid world policy for one episode and accumulate the reward
+    }
 }
 
 
