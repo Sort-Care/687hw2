@@ -54,6 +54,18 @@ int random_sample_weights(const double weights[], const int size){
     
 }
 
+int random_sample_eigen_vectors(const Eigen::VectorXd& vec){
+    double sum = vec.sum();
+    double rnum = random_range(sum);
+    REP (i, 0, vec.rows() - 1){
+        if(rnum < vec(i,0)) return i;
+        else {
+            rnum -= vec(i,0);
+        }
+    }
+    return (-1);
+}
+
 double random_range(double range){
     std::mt19937_64 rng;
         // initialize the random number generator with time-dependent seed

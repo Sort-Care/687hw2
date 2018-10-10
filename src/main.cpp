@@ -59,16 +59,27 @@ int main(int argc, char *argv[]){
     //     x(1, i) = vector(1);
     // }
 
-    Eigen::MatrixXd test(3,4);
-    test << 0,1,2,3,
-        2,3,4,5,
-        3,4,5,6;
+    // Eigen::MatrixXd test(3,4);
+    // test << 0,1,2,3,
+    //     2,3,4,5,
+    //     3,4,5,6;
+
+    
     
 
-    Eigen::VectorXd res(3);
+    // Eigen::VectorXd res(3);
 
-    res = test.col(1);
-    std::cout << res << std::endl;
+    // res = test.col(1);
+    // std::cout << res << std::endl;
+
+    Eigen::VectorXd r2(8);
+
+    r2 << 1,2,3,3,5,6,7,8;
+    struct policy po = {r2, 0.0};
+    Eigen::MatrixXd res = grid_softmax(po, 4, 2);
+    std::cout<< res << std::endl;
+    
+    
     
     
 

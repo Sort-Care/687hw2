@@ -22,25 +22,25 @@ enum ACTIONS {AU, AD, AL, AR};//0, 1, 2, 3
 enum OUTCOMES {SUC, STAY, VL, VR}; // with probabilities: 0.8, 0.1, 0.05, 0.05
 const int coordinate_change[NUM_ACTION][NUM_OUTCOME][2] = {
     {//AU
-    {-1, 0}, //SUC
+        {-1, 0}, //SUC
         {0, 0},  //STAY
         {0, -1}, //VL
         {0, 1}   //VR
     },
     {//AD
-    {1, 0},
+        {1, 0},
         {0, 0},
         {0, 1},
         {0, -1}
     },
     {//AL
-    {0, -1},
+        {0, -1},
         {0, 0},
         {1, 0},
         {-1, 0}
     },
     {//AR
-    {0, 1},
+        {0, 1},
         {0, 0},
         {-1, 0},
         {1, 0}
@@ -135,12 +135,12 @@ void generateInput(){
         //initialize all to 0.0
         //printf("Trans table row: %d, column: %d\n", STATE_NUM*NUM_ACTION, STATE_NUM);
     REP (s, 0, STATE_NUM-1){//Genrate Transition probability row for state_i
-    if(s == goal_state-1){//skip the one for goal_state
-    continue;
+        if(s == goal_state-1){//skip the one for goal_state
+            continue;
         }
         
         REP (a, 0, NUM_ACTION-1 ){//for each action
-    REP (o, 0, NUM_OUTCOME-1 ){//For each outcome
+            REP (o, 0, NUM_OUTCOME-1 ){//For each outcome
                     /*
                       Code Block for 
                       STATE: s
@@ -153,7 +153,7 @@ void generateInput(){
                     //        a,
                     //        o);
                 
-    int x, y;
+                int x, y;
                 x = state_to_coor[s][X];
                 y = state_to_coor[s][Y];
                 
@@ -161,7 +161,7 @@ void generateInput(){
                 off_x = coordinate_change[a][o][X];
                 off_y = coordinate_change[a][o][Y];
 
-    //printf("X: %d, Y: %d, OFF_X: %d, OFF_Y: %d\n", x,y,off_x,off_y);
+                    //printf("X: %d, Y: %d, OFF_X: %d, OFF_Y: %d\n", x,y,off_x,off_y);
                 
 
                     //tell if the coordinates are valid or not, if not shift to original
@@ -171,37 +171,37 @@ void generateInput(){
                 
                 if (new_x < 0 || new_x > 4 || new_y < 0 || new_y > 4 || GW[new_x][new_y] == NEG_INF){// invalid new position
                         //reset to original, which means not moved
-    new_x = x; new_y = y;
+                    new_x = x; new_y = y;
                 }
-    // printf("New_x: %d\t New_y: %d \n",
+                    // printf("New_x: %d\t New_y: %d \n",
                     //        new_x,
                     //        new_y);
                     //compute probability
                 int result_state = coor_to_state[new_x][new_y];
 
-    //update trans_table[s * NUM]
+                    //update trans_table[s * NUM]
                 trans_table[s * NUM_ACTION + a][result_state-1] += probs[o];
-    // printf("Updating transition table at (%d, %d) adding prob %f\n",
+                    // printf("Updating transition table at (%d, %d) adding prob %f\n",
                     //        s*NUM_ACTION+a,
                     //        result_state-1,
                     //        probs[o]);
                 
             }
-    //print trans_table[s*a][ALL]
+                //print trans_table[s*a][ALL]
             
         }
         
     }
 
-    //modify the transition table according to the terminal state
+        //modify the transition table according to the terminal state
 
         //first modify the goals transition to always go to absorbing state
     REP (i, 0, NUM_ACTION-1){
-    trans_table[(goal_state-1)*NUM_ACTION + i][absorbing_state-1] = 1.0;
+        trans_table[(goal_state-1)*NUM_ACTION + i][absorbing_state-1] = 1.0;
         trans_table[(absorbing_state-1)*NUM_ACTION + i][absorbing_state-1] = 1.0;
     }
 
-    //print_normal();
+        //print_normal();
 }
 
 
@@ -209,13 +209,13 @@ void generateInput(){
 void print_normal(){
     printf("%d\n", STATE_NUM+1);//first line number of state
     REP (i, 0, STATE_NUM-1){//the next STATE_NUM line: rewards for entering each state
-    printf("%.1f\n", GW[state_to_coor[i][X]][state_to_coor[i][Y]]);
+        printf("%.1f\n", GW[state_to_coor[i][X]][state_to_coor[i][Y]]);
     }
     printf("%.2f\n", 0.00);//absorbing_state
     REP (i, 0, (STATE_NUM+1)*NUM_ACTION-1){// next STATE_NUM * NUM_ACTION lines: Transition table
-    REP (j, 0, STATE_NUM){
+        REP (j, 0, STATE_NUM){
 //            printf("(%d, %d): ",i, j);
-    printf("%.2f, ", trans_table[i][j]);
+            printf("%.2f, ", trans_table[i][j]);
         }
         printf("\n");
     }
@@ -228,20 +228,20 @@ void print_for_py(){
         //print to run value iteration with a python file
     printf("%d\n", STATE_NUM+1);
     REP (i, 0, STATE_NUM-1){//the next STATE_NUM line: rewards for entering each state
-    printf("%.1f\n", GW[state_to_coor[i][X]][state_to_coor[i][Y]]);
+        printf("%.1f\n", GW[state_to_coor[i][X]][state_to_coor[i][Y]]);
     }
 
     printf("%.2f\n", 0.00);
     REP (i, 0, NUM_ACTION-1){// 0, 1, 2, 3  No L, U, R, D
             //for each actions print for every state, here it should be printing
             // 24 lines
-    REP (j, 0, STATE_NUM){ //0, 1, ..., 23
+        REP (j, 0, STATE_NUM){ //0, 1, ..., 23
                 //print trans_table[(j-1)*NUM_ACTION+i][all]
-    REP(k, 0, STATE_NUM){
-    printf("%.2f", trans_table[j*NUM_ACTION+action_order[i]][k]);
+            REP(k, 0, STATE_NUM){
+                printf("%.2f", trans_table[j*NUM_ACTION+action_order[i]][k]);
                 if (k != STATE_NUM) printf(", ");
                 else{
-    printf("\n");
+                    printf("\n");
                 }
             }
         }
@@ -262,17 +262,17 @@ double simulate_random(){
             //sample an action randomly
             //printf("Current State: %d\t", S_t);
         
-    A_t = random_sample_weights(pr_actions, 4);
-    //printf("Picked Action: %d\t", A_t);
+        A_t = random_sample_weights(pr_actions, 4);
+            //printf("Picked Action: %d\t", A_t);
         
             //sample the next state given
         S_tn = random_sample_weights(trans_table[S_t * NUM_ACTION + A_t], STATE_NUM+1);
-    //printf("Next State: %d\n", S_tn);
+            //printf("Next State: %d\n", S_tn);
         
             //Get reward
         discounted_reward += pow(dis_gamma, cnt) * GW[state_to_coor[S_tn][X]][state_to_coor[S_tn][Y]];
         cnt ++;
-    //printf("discounted: %f\t Reward:%.2f\n", pow(dis_gamma, cnt),
+            //printf("discounted: %f\t Reward:%.2f\n", pow(dis_gamma, cnt),
             //GW[state_to_coor[S_tn][X]][state_to_coor[S_tn][Y]]);
         
 
@@ -281,13 +281,13 @@ double simulate_random(){
     }
 
     return discounted_reward;
-    //printf("%.8f\n", discounted_reward);
+        //printf("%.8f\n", discounted_reward);
 }
 
 
 double estimate_quantity(){
     REP(i, 0, NUM_EPISODES-1){
-    printf("\rEpisode: %d", i);
+        printf("\rEpisode: %d", i);
         int start_state = random_sample_weights(d_0, 23);
         int S_t, A_t, S_tn;
         int cnt = 0;
@@ -300,12 +300,12 @@ double estimate_quantity(){
                 //sample an action randomly
                 //printf("Current State: %d\t", S_t);
         
-    A_t = random_sample_weights(pr_actions, 4);
-    //printf("Picked Action: %d\t", A_t);
+            A_t = random_sample_weights(pr_actions, 4);
+                //printf("Picked Action: %d\t", A_t);
         
                 //sample the next state given
             S_tn = random_sample_weights(trans_table[S_t * NUM_ACTION + A_t], STATE_NUM+1);
-    //printf("Next State: %d\n", S_tn);
+                //printf("Next State: %d\n", S_tn);
         
                 //Get reward
                 //discounted_reward += pow(dis_gamma, cnt) * GW[state_to_coor[S_tn][X]][state_to_coor[S_tn][Y]];
@@ -313,15 +313,15 @@ double estimate_quantity(){
 
             if(cnt == 8 && S_tn == 17){
 //                printf("\n adding one to s18");
-    s18_cnt++;
+                s18_cnt++;
                 valid_trial = true;
             }
             if(valid_trial && cnt == 19 && S_tn == 20){
 //                printf("\nadding one to s21 given s18");
-    s21_cnt++;
+                s21_cnt++;
             }
 
-    //printf("discounted: %f\t Reward:%.2f\n", pow(dis_gamma, cnt),
+                //printf("discounted: %f\t Reward:%.2f\n", pow(dis_gamma, cnt),
                 //GW[state_to_coor[S_tn][X]][state_to_coor[S_tn][Y]]);
         
 
@@ -347,17 +347,17 @@ double simulate_optimal(){
             //sample an action randomly
             //printf("Current State: %d\t", S_t);
         
-    A_t = optimal_policy[S_t];
-    //printf("Picked Action: %d\t", A_t);
+        A_t = optimal_policy[S_t];
+            //printf("Picked Action: %d\t", A_t);
         
             //sample the next state given
         S_tn = random_sample_weights(trans_table[S_t * NUM_ACTION + A_t], STATE_NUM+1);
-    //printf("Next State: %d\n", S_tn);
+            //printf("Next State: %d\n", S_tn);
         
             //Get reward
         discounted_reward += pow(dis_gamma, cnt) * GW[state_to_coor[S_tn][X]][state_to_coor[S_tn][Y]];
         cnt ++;
-    //printf("discounted: %f\t Reward:%.2f\n", pow(dis_gamma, cnt),
+            //printf("discounted: %f\t Reward:%.2f\n", pow(dis_gamma, cnt),
             //GW[state_to_coor[S_tn][X]][state_to_coor[S_tn][Y]]);
         
 
@@ -366,13 +366,13 @@ double simulate_optimal(){
     }
 
     return discounted_reward;
-    //printf("%.8f\n", discounted_reward);
+        //printf("%.8f\n", discounted_reward);
 }
 
 void run_simulation_with_strategy(double (*f)()){
     printf("Episode: \n");
     REP (i, 0, NUM_EPISODES-1){
-    printf("\r %d", i);
+        printf("\r %d", i);
         episode_reward[i] = (*f)();
     }
     printf("\n");
@@ -398,20 +398,56 @@ void get_standard_deviation(const double array[],
     double sum = 0.0, mean, deviation = 0.0;
 
     REP(i, 0, size-1){//compute the sum of the array
-    sum += array[i];
+        sum += array[i];
     }
 
-    //get the mean
+        //get the mean
     mean = sum / size;
     *amean = mean;
     REP(i, 0, size-1){
-    deviation += pow(array[i]-mean, 2);
+        deviation += pow(array[i]-mean, 2);
     }
 
     *adevia = sqrt(deviation / size);
 }
 
+/*
+ * Transfer theta to pi: R^n --> [0,1]^n
+ */
+Eigen::MatrixXd grid_softmax(struct policy& po,
+                             const int rows, //NUM_ACTION
+                             const int cols){//STATE_NUM
+        //first reshape
+    Eigen::Map<Eigen::MatrixXd> reshaped(po.param.data(), rows, cols);
+        // then apply softmax
+    Eigen::MatrixXd soft = reshaped.array().exp();
+        // then normalize
+    Eigen::RowVectorXd col_mean = soft.colwise().sum();
+    std::cout << soft << std::endl << col_mean << std::endl;
+    Eigen::MatrixXd repeat = col_mean.colwise().replicate(rows);
+    return soft.array() / repeat.array();
+}
 
-double run_gridworld_on_policy(){
+/*
+ * This function takes a policy parameter struct and simulate the gridworld
+ * and return the discounted reward.
+ */
+double run_gridworld_on_policy(struct policy& po){
+        //first step reshape the policy parameter vector
+        // reshape it to size (4, 23)
+    Eigen::MatrixXd pi = grid_softmax(po, NUM_ACTION, STATE_NUM);
+        //pi.col(i) represents the policy function pi for state i
+    int S_t = 0, A_t, S_tn;
+    double discounted_reward = 0.0;
+    int cnt = 0;
+
+    while (S_t != absorbing_state -1){
+        A_t = random_sample_eigen_vectors(pi.col(S_t));// sample an action
+        S_tn = random_sample_weights(trans_table[S_t * NUM_ACTION + A_t], STATE_NUM + 1);
+        discounted_reward += pow(dis_gamma, cnt) * GW[state_to_coor[S_tn][X]][state_to_coor[S_tn][Y]];
+        cnt ++;
+        S_t = S_tn;
+    }
+    return discounted_reward;
 
 }

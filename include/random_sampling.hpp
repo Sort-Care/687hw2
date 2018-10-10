@@ -4,6 +4,7 @@
 #include <random>
 #include <chrono>
 #include <cmath>
+#include <Eigen/Dense>
 #include "conventions.hpp"
 
 /*
@@ -20,5 +21,11 @@ int random_sample_weights(const double weights[], const int size);
 double random_zero_to_one();
 
 double random_range(double range);
+
+/*
+ * Sample from a eigen vector
+ */
+int random_sample_eigen_vectors(const Eigen::VectorXd& vec);
+
 
 #endif

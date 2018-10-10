@@ -1,6 +1,6 @@
 #include <Eigen/Dense>
 #include "bbo.hpp"
-#include "gird.hpp"
+#include "grid.hpp"
 
 
 /*
@@ -113,7 +113,9 @@ void eval_grid_policy(struct policy& po,
         // loop: do N episodes
     REP (i, 0, num_episodes-1){
             //run the grid world policy for one episode and accumulate the reward
+        po.J += run_gridworld_on_policy(po);
     }
+    po.J /= num_episodes;
 }
 
 
