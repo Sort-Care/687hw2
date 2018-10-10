@@ -437,15 +437,19 @@ double run_gridworld_on_policy(struct policy& po){
         //pi.col(i) represents the policy function pi for state i
     int S_t = 0, A_t, S_tn;
     double discounted_reward = 0.0;
+    double discount_fact = 1;
+    
     int cnt = 0;
 
     while (S_t != absorbing_state -1){
         A_t = random_sample_eigen_vectors(pi.col(S_t));// sample an action
         S_tn = random_sample_weights(trans_table[S_t * NUM_ACTION + A_t], STATE_NUM + 1);
-        discounted_reward += pow(dis_gamma, cnt) * GW[state_to_coor[S_tn][X]][state_to_coor[S_tn][Y]];
+        discounted_reward += discount_fact * GW[state_to_coor[S_tn][X]][state_to_coor[S_tn][Y]];
+        discount_fact *= dis_gamma;
         cnt ++;
         S_t = S_tn;
     }
+//    po.J += discounted_reward;
     return discounted_reward;
 
 }

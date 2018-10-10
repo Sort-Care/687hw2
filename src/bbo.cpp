@@ -58,13 +58,12 @@ void cross_entropy(const int n,
                                     const int
                                     ) // evaluating function
                    ){
-    int converged = 250;// try loop for 10
+    int converged = 180;// try loop for 10
     int cnt = 0;        // count the outer loop
 
     MVN mvn(theta, cov);//initialize the multivariate normal distribution
         //note that the above structure will be changed later
     while (converged != 0){
-        std::cout << converged << std::endl;
         converged --;
         std::priority_queue <struct policy, std::vector<struct policy>, policy_compare> poque;
 
@@ -92,7 +91,9 @@ void cross_entropy(const int n,
                 //pop out the top element
             poque.pop();
         }
+        
         theta = elite_param.rowwise().mean();
+            // early termination
         mvn.set_mean(theta);
             //std::cout<< "New Mean: "<< theta << std::endl;
         
@@ -101,6 +102,7 @@ void cross_entropy(const int n,
         cov = (Eigen::MatrixXd::Identity(n, n) * epsi + centered * centered.transpose()) / (epsi + E);
         mvn.set_covar(cov);
             //update converged flag
+        cnt ++;
 
     }
 
@@ -154,10 +156,11 @@ void eval_grid_policy(struct policy& po,
         // loop: do N episodes
     REP (i, 0, num_episodes-1){
             //run the grid world policy for one episode and accumulate the reward
-        po.J += run_gridworld_on_policy(po);
+        double reward = run_gridworld_on_policy(po);
+        std::cout << axis + i <<'\t' << reward << std::endl;
+        po.J += reward;
     }
     po.J /= num_episodes;
-    std::cout<< "policy evalued: "<< po.J << std::endl;
     
 }
 
@@ -171,5 +174,8 @@ void eval_cart_pole_policy(struct policy& po,
 
 }
 
-void save_data();
+void save_data(const double J, const int axis){
+        //save axis, J to file
+    
+}
 

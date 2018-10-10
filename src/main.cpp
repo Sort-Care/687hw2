@@ -93,9 +93,9 @@ int main(int argc, char *argv[]){
          * Seeing improvments to near optimal with:
          * K = 20, E = 2, N = 10, epsi = 0.1
          */
-    int K = 20;
+    int K = 15;
     int E = 2;
-    int N = 10;
+    int N = 6;
     double epsi = 0.1;
     cross_entropy(param_size,
                   theta,
