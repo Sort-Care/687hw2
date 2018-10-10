@@ -22,6 +22,7 @@
 +-----------------------------------------------------------------------------*/
 
 #include <Eigen/Dense>
+#include <iostream>
 #include "bbo.hpp"
 #include "grid.hpp"
 
@@ -52,13 +53,19 @@ void cross_entropy(const int n,
                    const int E,           // Elite population
                    const int N,           // Number of episodes for each policy
                    double epsi,           // epsilon: stability param
-                   void (*evalFunc)(struct policy , const int) // evaluating function
+                   void (*evalFunc)(struct policy& ,
+                                    const int,
+                                    const int
+                                    ) // evaluating function
                    ){
-    int converged = 0;
+    int converged = 250;// try loop for 10
+    int cnt = 0;        // count the outer loop
 
     MVN mvn(theta, cov);//initialize the multivariate normal distribution
         //note that the above structure will be changed later
-    while (converged != 1){
+    while (converged != 0){
+        std::cout << converged << std::endl;
+        converged --;
         std::priority_queue <struct policy, std::vector<struct policy>, policy_compare> poque;
 
             // sample k policy parameter vectors
@@ -67,8 +74,9 @@ void cross_entropy(const int n,
                 //sample one policy parameter vector
             struct policy tmp_po;
             tmp_po.param = mvn.sample(1000);
+                //std::cout << "sampled" << tmp_po.param <<std::endl;
                 //evaluate the policy
-            evalFunc(tmp_po, N);
+            evalFunc(tmp_po, N, cnt*K*N + i*N);
                 //push this policy into priority queue
             poque.push(tmp_po);
         }
@@ -85,9 +93,13 @@ void cross_entropy(const int n,
             poque.pop();
         }
         theta = elite_param.rowwise().mean();
+        mvn.set_mean(theta);
+            //std::cout<< "New Mean: "<< theta << std::endl;
+        
             //update the cov according to above results
         Eigen::MatrixXd centered = elite_param.colwise() - theta;
         cov = (Eigen::MatrixXd::Identity(n, n) * epsi + centered * centered.transpose()) / (epsi + E);
+        mvn.set_covar(cov);
             //update converged flag
 
     }
@@ -98,22 +110,27 @@ void hill_climbing(const int n,
                    Eigen::VectorXd& theta,// Initial mean policy parameter vector
                    const double tau,      // Exploration parameter
                    const int N,           // Number of episodes to evaluate
-                   void (*evalFunc)(struct policy, const int) // evaluate function
+                   void (*evalFunc)(struct policy&,
+                                    const int,
+                                    const int) // evaluate function
                    ){
     int convergent = 0;
 
     policy best_policy = {theta, 0.0};
 
-    evalFunc(best_policy,N);
+    evalFunc(best_policy, N, 0);
     MVN mvn(theta, Eigen::MatrixXd::Identity(n,n) * tau);
 
     while (convergent != 1){
+        
         policy tmp_po;
         tmp_po.param = mvn.sample(1000);
-        evalFunc(tmp_po,N);
+        evalFunc(tmp_po, N, 0);// putting zero there just for now
         if (tmp_po.J > best_policy.J){
             best_policy.param = tmp_po.param;
             best_policy.J = tmp_po.J;
+                //update the distribution
+            mvn.set_mean(best_policy.param);
         }
             //test convergence
     }
@@ -129,7 +146,8 @@ void hill_climbing(const int n,
  * average discounted return in the policy structure.
  */
 void eval_grid_policy(struct policy& po,
-                      const int num_episodes){
+                      const int num_episodes,
+                      const int axis){
     po.J = 0.0;
         // transfer policy parameter to a policy probability table
 
@@ -139,6 +157,8 @@ void eval_grid_policy(struct policy& po,
         po.J += run_gridworld_on_policy(po);
     }
     po.J /= num_episodes;
+    std::cout<< "policy evalued: "<< po.J << std::endl;
+    
 }
 
 
@@ -146,6 +166,10 @@ void eval_grid_policy(struct policy& po,
  * Evaluate cart pole policy
  */
 void eval_cart_pole_policy(struct policy& po,
-                           const int num_episodes){
+                           const int num_episodes,
+                           const int axis){
 
 }
+
+void save_data();
+

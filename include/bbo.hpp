@@ -6,6 +6,7 @@
 #include <vector>
 #include "conventions.hpp"
 #include "multi_normal.hpp"
+#include "grid.hpp"
 
 struct policy {
         //policy parameters
@@ -21,18 +22,28 @@ void cross_entropy(const int n,
                    const int E,
                    const int N,
                    double epsi,
-                   double (*evalFunc)(Eigen::VectorXd, const int));
+                   void (*evalFunc)(struct policy&, // policy
+                                    const int,      // number of episodes
+                                    const int       // axis
+                                    ));
 
 void hill_climbing(Eigen::VectorXd& theta,// Initial mean policy parameter vector
                    const double tau,      // Exploration parameter
-                   const int N            // Number of episodes to evaluate   
+                   const int N,            // Number of episodes to evaluate
+                   void (*evalFunc)(struct policy&,
+                                    const int,
+                                    const int)
                    );
 
 void eval_grid_policy(struct policy& po,
-                      const int num_episodes);
+                      const int num_episodes,
+                      const int axis);
 
 void eval_cart_pole_policy(struct policy& po,
-                           const int num_episodes);
+                           const int num_episodes,
+                           const int axis);
+
+void save_data(const double J, const int axis);
 
 
 #endif

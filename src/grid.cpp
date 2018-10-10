@@ -18,8 +18,6 @@ const int Y = 1;
 
 
 // Four actions
-enum ACTIONS {AU, AD, AL, AR};//0, 1, 2, 3
-enum OUTCOMES {SUC, STAY, VL, VR}; // with probabilities: 0.8, 0.1, 0.05, 0.05
 const int coordinate_change[NUM_ACTION][NUM_OUTCOME][2] = {
     {//AU
         {-1, 0}, //SUC
