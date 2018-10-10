@@ -1,3 +1,26 @@
+/*-----------------------------------------------------------------------------+
+| This file is for applying Cross Entropy and hill climbing to:                |
+|     1. Gridworld                                                             |
+|     2. Cart Pole                                                             |
+| The cross entropy and hill climbing functions can be considered as           |
+| interfaces for that they are fed with different evalFuncs to apply           |
+| these two methods to different problem scope.                                |
+| EvalFuncs are problem related and will use any functions by the              |
+| problem environment implementation.                                          |
+|                                                                              |
+| There is a policy structure definition in the hpp file and the               |
+| policy_compare function is for updating the priority queue in order          |
+| to extract top K elite policy parameter vectors.                             |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+|                                                                              |
+| Author: Haoyu Ji                                                             |
+| Date: 10/09/2018                                                             |
++-----------------------------------------------------------------------------*/
+
 #include <Eigen/Dense>
 #include "bbo.hpp"
 #include "grid.hpp"
@@ -26,7 +49,7 @@ void cross_entropy(const int n,
                    Eigen::VectorXd& theta,// initial mean parameter vector, shape (n,1)
                    Eigen::MatrixXd& cov,  // initial nxn covariance matrix, shape (n,n)
                    const int K,           // Population
-                   const int E,           // Elite population  
+                   const int E,           // Elite population
                    const int N,           // Number of episodes for each policy
                    double epsi,           // epsilon: stability param
                    void (*evalFunc)(struct policy , const int) // evaluating function
@@ -37,7 +60,7 @@ void cross_entropy(const int n,
         //note that the above structure will be changed later
     while (converged != 1){
         std::priority_queue <struct policy, std::vector<struct policy>, policy_compare> poque;
-        
+
             // sample k policy parameter vectors
         Eigen::MatrixXd elite_param(n, E); // structure that holds elite population
         REP (i, 0, K-1) {
@@ -54,7 +77,7 @@ void cross_entropy(const int n,
              * May be there's no need for sorting at all!
              * Could use max heap to find top K
              */
-        
+
             //summing over the first E elite and update the theta
         REP (i, 0, E-1){
             elite_param.col(i) = poque.top().param;
@@ -66,9 +89,9 @@ void cross_entropy(const int n,
         Eigen::MatrixXd centered = elite_param.colwise() - theta;
         cov = (Eigen::MatrixXd::Identity(n, n) * epsi + centered * centered.transpose()) / (epsi + E);
             //update converged flag
-        
+
     }
-    
+
 }
 
 void hill_climbing(const int n,
@@ -78,12 +101,12 @@ void hill_climbing(const int n,
                    void (*evalFunc)(struct policy, const int) // evaluate function
                    ){
     int convergent = 0;
-    
+
     policy best_policy = {theta, 0.0};
 
     evalFunc(best_policy,N);
     MVN mvn(theta, Eigen::MatrixXd::Identity(n,n) * tau);
-    
+
     while (convergent != 1){
         policy tmp_po;
         tmp_po.param = mvn.sample(1000);
@@ -94,13 +117,13 @@ void hill_climbing(const int n,
         }
             //test convergence
     }
-    
+
 }
 
 /*
  * Evaluate a single policy for some episodes and return average J
- * Note that in the struct data structure, the policy is represented 
- * in the form of policy parameters. Thus before evaluating it, we 
+ * Note that in the struct data structure, the policy is represented
+ * in the form of policy parameters. Thus before evaluating it, we
  * need to transfer it to another form.
  * This function run evaluation on [policy] [num_episodes] times and store the
  * average discounted return in the policy structure.
@@ -126,6 +149,3 @@ void eval_cart_pole_policy(struct policy& po,
                            const int num_episodes){
 
 }
-
-
-

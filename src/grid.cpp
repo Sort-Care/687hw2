@@ -423,7 +423,7 @@ Eigen::MatrixXd grid_softmax(struct policy& po,
     Eigen::MatrixXd soft = reshaped.array().exp();
         // then normalize
     Eigen::RowVectorXd col_mean = soft.colwise().sum();
-    std::cout << soft << std::endl << col_mean << std::endl;
+        // replicate before division
     Eigen::MatrixXd repeat = col_mean.colwise().replicate(rows);
     return soft.array() / repeat.array();
 }
