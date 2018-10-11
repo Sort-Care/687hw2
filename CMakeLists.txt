@@ -3,6 +3,7 @@ project(687hw2)
 set(CMAKE_CXX_STANDARD 11)
 
 find_package(Eigen3 3.3 REQUIRED NO_MODULE)
+find_package(Threads)
 
 include_directories(include)
 
@@ -11,4 +12,8 @@ list(FILTER SOURCES EXCLUDE REGEX "\\.#.*")
 
 add_executable(hw2 ${SOURCES})
 
-target_link_libraries (hw2 Eigen3::Eigen)
+target_link_libraries (
+  hw2
+  Eigen3::Eigen
+  ${CMAKE_THREAD_LIBS_INIT}
+  )

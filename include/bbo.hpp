@@ -4,6 +4,10 @@
 #include <Eigen/Core> // for using eigen in multithreads, run Eigen::initParallel() first.
 #include <queue>
 #include <vector>
+#include <thread>
+#include <future>
+
+
 #include "conventions.hpp"
 #include "multi_normal.hpp"
 #include "grid.hpp"
@@ -44,6 +48,11 @@ void eval_cart_pole_policy(struct policy& po,
                            const int axis);
 
 void save_data(const double J, const int axis);
+
+void eval_grid_multithread(struct policy& po,
+                           const int num_episodes,
+                           const int axis);
+
 
 
 #endif

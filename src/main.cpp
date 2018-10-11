@@ -93,9 +93,9 @@ int main(int argc, char *argv[]){
          * Seeing improvments to near optimal with:
          * K = 20, E = 2, N = 10, epsi = 0.1
          */
-    int K = 15;
-    int E = 2;
-    int N = 6;
+    int K = 20;
+    int E = 1;
+    int N = 10;
     double epsi = 0.1;
     cross_entropy(param_size,
                   theta,
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]){
                   E,
                   N,
                   epsi,
-                  eval_grid_policy);
+                  eval_grid_multithread);
 
         //for grid world with above params, seems like it can reach near optimal
         // within 150 loop over population improvement

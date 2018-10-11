@@ -1,25 +1,25 @@
 /*-----------------------------------------------------------------------------+
-| This file is for applying Cross Entropy and hill climbing to:                |
-|     1. Gridworld                                                             |
-|     2. Cart Pole                                                             |
-| The cross entropy and hill climbing functions can be considered as           |
-| interfaces for that they are fed with different evalFuncs to apply           |
-| these two methods to different problem scope.                                |
-| EvalFuncs are problem related and will use any functions by the              |
-| problem environment implementation.                                          |
-|                                                                              |
-| There is a policy structure definition in the hpp file and the               |
-| policy_compare function is for updating the priority queue in order          |
-| to extract top K elite policy parameter vectors.                             |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-|                                                                              |
-| Author: Haoyu Ji                                                             |
-| Date: 10/09/2018                                                             |
-+-----------------------------------------------------------------------------*/
+  | This file is for applying Cross Entropy and hill climbing to:                |
+  |     1. Gridworld                                                             |
+  |     2. Cart Pole                                                             |
+  | The cross entropy and hill climbing functions can be considered as           |
+  | interfaces for that they are fed with different evalFuncs to apply           |
+  | these two methods to different problem scope.                                |
+  | EvalFuncs are problem related and will use any functions by the              |
+  | problem environment implementation.                                          |
+  |                                                                              |
+  | There is a policy structure definition in the hpp file and the               |
+  | policy_compare function is for updating the priority queue in order          |
+  | to extract top K elite policy parameter vectors.                             |
+  |                                                                              |
+  |                                                                              |
+  |                                                                              |
+  |                                                                              |
+  |                                                                              |
+  |                                                                              |
+  | Author: Haoyu Ji                                                             |
+  | Date: 10/09/2018                                                             |
+  +-----------------------------------------------------------------------------*/
 
 #include <Eigen/Dense>
 #include <iostream>
@@ -161,6 +161,31 @@ void eval_grid_policy(struct policy& po,
         po.J += reward;
     }
     po.J /= num_episodes;
+    
+}
+
+int twice(int m) {
+    return 2 * m;
+}
+
+void eval_grid_multithread(struct policy& po,
+                           const int num_episodes,
+                           const int axis){
+
+    po.J = 0.0;
+
+    std::vector<std::future<double>> futures;
+    
+    REP(i, 0, num_episodes-1){
+        futures.push_back(std::async([&]{ return run_gridworld_on_policy(po);}));
+    }
+ 
+        //retrive and print the value stored in the future
+    for(auto &e : futures) {
+        po.J += e.get();
+    }
+    po.J /= num_episodes;
+    std::cout<< po.J << std::endl;
     
 }
 
