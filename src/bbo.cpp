@@ -58,7 +58,7 @@ void cross_entropy(const int n,
                                     const int
                                     ) // evaluating function
                    ){
-    int converged = 180;// try loop for 10
+    int converged = 70;// try loop for 10
     int cnt = 0;        // count the outer loop
 
     MVN mvn(theta, cov);//initialize the multivariate normal distribution
@@ -88,6 +88,7 @@ void cross_entropy(const int n,
             //summing over the first E elite and update the theta
         REP (i, 0, E-1){
             elite_param.col(i) = poque.top().param;
+            std::cout<<"Elite reward: " << poque.top().J << std::endl;
                 //pop out the top element
             poque.pop();
         }
@@ -171,6 +172,7 @@ int twice(int m) {
 void eval_grid_multithread(struct policy& po,
                            const int num_episodes,
                            const int axis){
+        //maximum on my ubuntu desktop: 16GM RAM: 125599
 
     po.J = 0.0;
 

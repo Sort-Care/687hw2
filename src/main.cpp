@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
 
 
 
-    
+        //======================== GRID WORLD =======================
 
     int param_size = NUM_ACTION * STATE_NUM;
     
@@ -93,10 +93,10 @@ int main(int argc, char *argv[]){
          * Seeing improvments to near optimal with:
          * K = 20, E = 2, N = 10, epsi = 0.1
          */
-    int K = 20;
+    int K = 15;
     int E = 1;
     int N = 10;
-    double epsi = 0.1;
+    double epsi = 1.5;
     cross_entropy(param_size,
                   theta,
                   cov,
@@ -108,7 +108,9 @@ int main(int argc, char *argv[]){
 
         //for grid world with above params, seems like it can reach near optimal
         // within 150 loop over population improvement
-    
+
+
+        //========================== Cart Pole ========================
     
     
     
