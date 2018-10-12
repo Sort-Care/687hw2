@@ -70,4 +70,6 @@ Eigen::MatrixXd grid_softmax(struct policy& po,
 
 double run_gridworld_on_policy(struct policy& po);
 
+void run_cross_entropy_on_gridworld();
+
 #endif

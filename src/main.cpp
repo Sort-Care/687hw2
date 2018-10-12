@@ -83,13 +83,7 @@ int main(int argc, char *argv[]){
 
 
         //======================== GRID WORLD =======================
-
-    int param_size = NUM_ACTION * STATE_NUM;
-    
-    Eigen::VectorXd theta = Eigen::VectorXd::Zero(param_size);
-    Eigen::MatrixXd cov = Eigen::MatrixXd::Constant(param_size,
-                                                    param_size,
-                                                    0);
+    run_cross_entropy_on_gridworld();
 
         // Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(param_size,
         //                                                 param_size);
@@ -97,29 +91,7 @@ int main(int argc, char *argv[]){
          * Seeing improvments to near optimal with:
          * K = 20, E = 2, N = 10, epsi = 0.1
          */
-    int K = 20;
-    int E = 4;
-    int N = 8;
-    double epsi = 1.5;
-        //std::cout << "episode" <<'\t' << "return" << std::endl;
-    std::vector<std::future<void>> futures;
     
-    REP (i, 0, 10){
-        theta = Eigen::VectorXd::Zero(param_size);
-        cov = Eigen::MatrixXd::Constant(param_size,
-                                        param_size,
-                                        0);
-        futures.push_back(std::async(std::launch::async,
-                                     [&]{return cross_entropy(i,
-                                                              param_size,
-                                                              theta,
-                                                              cov,
-                                                              K,
-                                                              E,
-                                                              N,
-                                                              epsi,
-                                                              eval_grid_multithread);}));
-    }
         // cross_entropy(param_size,
         //               theta,
         //               cov,
