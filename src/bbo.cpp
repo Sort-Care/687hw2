@@ -176,7 +176,8 @@ void eval_grid_multithread(struct policy& po,
     std::vector<std::future<double>> futures;
     
     REP(i, 0, num_episodes-1){
-        futures.push_back(std::async([&]{ return run_gridworld_on_policy(po);}));
+        futures.push_back(std::async(std::launch::async,
+                                     [&]{ return run_gridworld_on_policy(po);}));
     }
  
         //retrive and print the value stored in the future
