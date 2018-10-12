@@ -6,6 +6,8 @@
 #include <vector>
 #include <thread>
 #include <future>
+#include <string>
+#include <fstream>
 
 
 #include "conventions.hpp"
@@ -19,7 +21,8 @@ struct policy {
 };
 
 
-void cross_entropy(const int n,
+void cross_entropy(const int trial,
+                   const int n,
                    Eigen::VectorXd& theta,// initial mean parameter vector
                    Eigen::MatrixXd& cov,  // initial nxn covariance matrix
                    const int K,
@@ -28,30 +31,40 @@ void cross_entropy(const int n,
                    double epsi,
                    void (*evalFunc)(struct policy&, // policy
                                     const int,      // number of episodes
-                                    const int       // axis
+                                    const int,       // axis
+                                    const int
                                     ));
 
-void hill_climbing(Eigen::VectorXd& theta,// Initial mean policy parameter vector
+void hill_climbing(const int trial,
+                   const int n,
+                   Eigen::VectorXd& theta,// Initial mean policy parameter vector
                    const double tau,      // Exploration parameter
                    const int N,            // Number of episodes to evaluate
                    void (*evalFunc)(struct policy&,
+                                    const int,
                                     const int,
                                     const int)
                    );
 
 void eval_grid_policy(struct policy& po,
                       const int num_episodes,
-                      const int axis);
+                      const int axis,
+                      const int trial);
 
 void eval_cart_pole_policy(struct policy& po,
                            const int num_episodes,
-                           const int axis);
+                           const int axis,
+                           const int trial);
 
-void save_data(const double J, const int axis);
+void save_data(const std::string prefix,
+               const double J,
+               const int axis,
+               const int trial);
 
 void eval_grid_multithread(struct policy& po,
                            const int num_episodes,
-                           const int axis);
+                           const int axis,
+                           const int trial);
 
 
 

@@ -46,7 +46,8 @@ public:
 /*
  * Cross entropy implementation
  */
-void cross_entropy(const int n,
+void cross_entropy(const int trial,       // trial number   
+                   const int n,
                    Eigen::VectorXd& theta,// initial mean parameter vector, shape (n,1)
                    Eigen::MatrixXd& cov,  // initial nxn covariance matrix, shape (n,n)
                    const int K,           // Population
@@ -54,8 +55,9 @@ void cross_entropy(const int n,
                    const int N,           // Number of episodes for each policy
                    double epsi,           // epsilon: stability param
                    void (*evalFunc)(struct policy& ,
-                                    const int,
-                                    const int
+                                    const int, // Number of episodes
+                                    const int, // for data dumping first column
+                                    const int  // for file name
                                     ) // evaluating function
                    ){
     int converged = 70;// try loop for 10
@@ -76,7 +78,7 @@ void cross_entropy(const int n,
             tmp_po.param = mvn.sample(10);
                 //std::cout << "sampled" << tmp_po.param <<std::endl;
                 //evaluate the policy
-            evalFunc(tmp_po, N, cnt*K*N + i*N);
+            evalFunc(tmp_po, N, cnt*K*N + i*N, trial);
                 //push this policy into priority queue
             poque.push(tmp_po);
         }
@@ -110,11 +112,13 @@ void cross_entropy(const int n,
 
 }
 
-void hill_climbing(const int n,
+void hill_climbing(const int trial,
+                   const int n,
                    Eigen::VectorXd& theta,// Initial mean policy parameter vector
                    const double tau,      // Exploration parameter
                    const int N,           // Number of episodes to evaluate
                    void (*evalFunc)(struct policy&,
+                                    const int,
                                     const int,
                                     const int) // evaluate function
                    ){
@@ -122,14 +126,14 @@ void hill_climbing(const int n,
 
     policy best_policy = {theta, 0.0};
 
-    evalFunc(best_policy, N, 0);
+    evalFunc(best_policy, N, 0, trial);
     MVN mvn(theta, Eigen::MatrixXd::Identity(n,n) * tau);
 
     while (convergent != 1){
         
         policy tmp_po;
         tmp_po.param = mvn.sample(1000);
-        evalFunc(tmp_po, N, 0);// putting zero there just for now
+        evalFunc(tmp_po, N, 0, trial);// putting zero there just for now
         if (tmp_po.J > best_policy.J){
             best_policy.param = tmp_po.param;
             best_policy.J = tmp_po.J;
@@ -151,7 +155,8 @@ void hill_climbing(const int n,
  */
 void eval_grid_policy(struct policy& po,
                       const int num_episodes,
-                      const int axis){
+                      const int axis,
+                      const int trial){
     po.J = 0.0;
         // transfer policy parameter to a policy probability table
 
@@ -168,7 +173,8 @@ void eval_grid_policy(struct policy& po,
 
 void eval_grid_multithread(struct policy& po,
                            const int num_episodes,
-                           const int axis){
+                           const int axis,
+                           const int trial){
         //maximum on my ubuntu desktop: 16GM RAM: 125599
 
     po.J = 0.0;
@@ -185,7 +191,12 @@ void eval_grid_multithread(struct policy& po,
     for(auto &e : futures) {
         double reward = e.get();
         po.J += reward;
-        std::cout << axis + cnt << '\t' << reward << std::endl;
+            //std::cout << axis + cnt << '\t' << reward << std::endl;
+            // write to file
+        save_data("GC",
+                  reward,
+                  axis+cnt,
+                  trial);
         cnt ++;
     }
     po.J /= num_episodes;
@@ -199,12 +210,20 @@ void eval_grid_multithread(struct policy& po,
  */
 void eval_cart_pole_policy(struct policy& po,
                            const int num_episodes,
-                           const int axis){
+                           const int axis,
+                           const int trial){
 
 }
 
-void save_data(const double J, const int axis){
+void save_data(const std::string prefix,
+               const double J,
+               const int axis,
+               const int trial){
         //save axis, J to file
-    
+    auto filename = prefix + std::to_string(trial);
+    std::fstream fs;
+    fs.open(filename, std::fstream::app);
+    fs << axis << '\t' << J <<'\n';
+    fs.close();
 }
 
