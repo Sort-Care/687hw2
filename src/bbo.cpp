@@ -72,7 +72,8 @@ void cross_entropy(const int n,
         REP (i, 0, K-1) {
                 //sample one policy parameter vector
             struct policy tmp_po;
-            tmp_po.param = mvn.sample(1000);
+            
+            tmp_po.param = mvn.sample(10);
                 //std::cout << "sampled" << tmp_po.param <<std::endl;
                 //evaluate the policy
             evalFunc(tmp_po, N, cnt*K*N + i*N);
@@ -88,7 +89,7 @@ void cross_entropy(const int n,
             //summing over the first E elite and update the theta
         REP (i, 0, E-1){
             elite_param.col(i) = poque.top().param;
-            std::cout<<"Elite reward: " << poque.top().J << std::endl;
+                //std::cout<<"Elite reward: " << poque.top().J << std::endl;
                 //pop out the top element
             poque.pop();
         }
@@ -165,10 +166,6 @@ void eval_grid_policy(struct policy& po,
     
 }
 
-int twice(int m) {
-    return 2 * m;
-}
-
 void eval_grid_multithread(struct policy& po,
                            const int num_episodes,
                            const int axis){
@@ -183,11 +180,15 @@ void eval_grid_multithread(struct policy& po,
     }
  
         //retrive and print the value stored in the future
+    int cnt = 0;
     for(auto &e : futures) {
-        po.J += e.get();
+        double reward = e.get();
+        po.J += reward;
+        std::cout << axis + cnt << '\t' << reward << std::endl;
+        cnt ++;
     }
     po.J /= num_episodes;
-    std::cout<< po.J << std::endl;
+//    std::cout<< po.J << std::endl;
     
 }
 

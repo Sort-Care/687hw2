@@ -87,24 +87,46 @@ int main(int argc, char *argv[]){
     int param_size = NUM_ACTION * STATE_NUM;
     
     Eigen::VectorXd theta = Eigen::VectorXd::Zero(param_size);
-    Eigen::MatrixXd cov = Eigen::MatrixXd::Constant(param_size, param_size,
+    Eigen::MatrixXd cov = Eigen::MatrixXd::Constant(param_size,
+                                                    param_size,
                                                     0);
+
+    // Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(param_size,
+    //                                                 param_size);
         /*
          * Seeing improvments to near optimal with:
          * K = 20, E = 2, N = 10, epsi = 0.1
          */
-    int K = 15;
-    int E = 1;
-    int N = 10;
+    int K = 20;
+    int E = 4;
+    int N = 8;
     double epsi = 1.5;
-    cross_entropy(param_size,
-                  theta,
-                  cov,
-                  K,
-                  E,
-                  N,
-                  epsi,
-                  eval_grid_multithread);
+    std::cout << "episode" <<'\t' << "return" << std::endl;
+    
+    REP (i, 0, 100){
+        theta = Eigen::VectorXd::Zero(param_size);
+        cov = Eigen::MatrixXd::Constant(param_size,
+                                        param_size,
+                                        0);
+        std::async(std::launch::async,
+                   [&]{return cross_entropy(param_size,
+                                            theta,
+                                            cov,
+                                            K,
+                                            E,
+                                            N,
+                                            epsi,
+                                            eval_grid_multithread);});
+        
+    }
+    // cross_entropy(param_size,
+    //               theta,
+    //               cov,
+    //               K,
+    //               E,
+    //               N,
+    //               epsi,
+    //               eval_grid_multithread);
 
         //for grid world with above params, seems like it can reach near optimal
         // within 150 loop over population improvement

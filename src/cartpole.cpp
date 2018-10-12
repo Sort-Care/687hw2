@@ -43,7 +43,7 @@ int get_bucket(struct cart_state& cs)
 
         /*
          *|--------------- (-1) ------- 0 -------- 1 -----------------|
-         *    BUCKET 0             BUCKET 1             BUCKET 2
+         *    BUCKET 0              BUCKET 1             BUCKET 2
          */
     if (cs.x < -1)				bucket = 0;
     else if (cs.x < 1)			bucket = 1;
