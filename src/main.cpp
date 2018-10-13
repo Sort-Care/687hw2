@@ -22,7 +22,7 @@
 
 
 #include "bbo.hpp"
-#include "multi_normal.hpp"
+#include "eigen_multi_norm.hpp"
 #include "random_sampling.hpp"
 #include "grid.hpp"
 #include "cartpole.hpp"
@@ -83,33 +83,26 @@ int main(int argc, char *argv[]){
 
 
         //======================== GRID WORLD =======================
-    run_cross_entropy_on_gridworld();
-
-        // Eigen::MatrixXd cov = Eigen::MatrixXd::Identity(param_size,
-        //                                                 param_size);
-        /*
-         * Seeing improvments to near optimal with:
-         * K = 20, E = 2, N = 10, epsi = 0.1
-         */
+        //run_cross_entropy_on_gridworld();
     
-        // cross_entropy(param_size,
-        //               theta,
-        //               cov,
-        //               K,
-        //               E,
-        //               N,
-        //               epsi,
-        //               eval_grid_multithread);
-
-        //for grid world with above params, seems like it can reach near optimal
-        // within 150 loop over population improvement
-
 
         //========================== Cart Pole ========================
+        run_cross_entropy_on_cartpole();
+        
+    // int cart_size = 10;
+    // Eigen::VectorXd theta = Eigen::VectorXd::Zero(cart_size);
+    // Eigen::MatrixXd cov = Eigen::MatrixXd::Constant(cart_size,
+    //                                     cart_size,
+    //                                     0);
     
-    
-    
+    // Eigen::EigenMultivariateNormal<double> mvn(theta, cov);
+    // std::cout << mvn.samples(1) << std::endl;
 
+    // MVN mvn(theta, cov);
+
+    // std::cout << mvn.sample(100) << std::endl;
+    
+    
         //     // Calculate the mean and convariance of the produces sampled points
         // Eigen::VectorXd approx_mean(2);
         // Eigen::MatrixXd approx_sigma(2, 2);

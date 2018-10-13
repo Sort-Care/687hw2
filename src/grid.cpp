@@ -456,12 +456,10 @@ double run_gridworld_on_policy(struct policy& po){
 
 void run_cross_entropy_on_gridworld(){
     
-    int param_size = NUM_ACTION * STATE_NUM;
+    int param_size = NUM_ACTION * STATE_NUM; // 92
     
-    Eigen::VectorXd theta = Eigen::VectorXd::Zero(param_size);
-    Eigen::MatrixXd cov = Eigen::MatrixXd::Constant(param_size,
-                                                    param_size,
-                                                    0);
+    Eigen::VectorXd theta;
+    Eigen::MatrixXd cov;
         /*
          * Seeing improvments to near optimal with:
          * K = 20, E = 2, N = 10, epsi = 0.1
@@ -473,13 +471,14 @@ void run_cross_entropy_on_gridworld(){
         //std::cout << "episode" <<'\t' << "return" << std::endl;
     std::vector<std::future<void>> futures;
     
-    REP (i, 0, 10){
+    REP (i, 0, 99){
         theta = Eigen::VectorXd::Zero(param_size);
         cov = Eigen::MatrixXd::Constant(param_size,
                                         param_size,
                                         0);
         futures.push_back(std::async(std::launch::async,
-                                     [&]{return cross_entropy(i,
+                                     [&]{return cross_entropy("GWE",
+                                                              i,
                                                               param_size,
                                                               theta,
                                                               cov,

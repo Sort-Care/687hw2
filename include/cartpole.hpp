@@ -8,6 +8,7 @@
 #include <Eigen/Dense>
 
 #include "bbo.hpp"
+#include "random_sampling.hpp"
 
 struct cart_state {
     double x;        // position
@@ -25,6 +26,11 @@ extern const double POLE_L;
 extern const double INTERVAL;
 extern const double MAXTIME;
 
+extern const int NUM_BUCKETS;
+extern const int NUM_LR;
+
+enum CART_ACTIONS {CLEFT, CRIGHT};
+
 
 /*
  * function that take in the current real state of cart pole
@@ -32,16 +38,17 @@ extern const double MAXTIME;
  */
 int get_bucket(struct cart_state& cs);
 
-void update_state(struct cart_state& cs);
+void update_state(struct cart_state& cs, const double& force);
 
 double get_theta_ddot(struct cart_state& cs, const double& force);
 double get_x_ddot(struct cart_state& cs, const double& force);
 
 double run_cartpole_on_policy(struct policy& po);
 
+Eigen::MatrixXd cartpole_softmax(struct policy& po,
+                                 const int rows,
+                                 const int cols);
 
-Eigen::MatrixXd cart_softmax(struct policy& po,
-                             const int rows, //NUM_ACTION
-                             const int cols);
+void run_cross_entropy_on_cartpole();
 
 #endif

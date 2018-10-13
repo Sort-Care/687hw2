@@ -1,5 +1,7 @@
 #ifndef __MVN
 #define __MVN
+
+#include <iostream>
 class MVN
 {
 public:

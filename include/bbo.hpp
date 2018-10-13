@@ -8,11 +8,13 @@
 #include <future>
 #include <string>
 #include <fstream>
+#include <mutex>
 
 
 #include "conventions.hpp"
-#include "multi_normal.hpp"
+#include "eigen_multi_norm.hpp"
 #include "grid.hpp"
+#include "cartpole.hpp"
 
 struct policy {
         //policy parameters
@@ -20,8 +22,24 @@ struct policy {
     double J;
 };
 
+/*
+ * Class for comparing policies in the priority queue
+ *
+ */
+class policy_compare{
+public:
+    bool operator() (struct policy p1, struct policy p2){
+        if (p1.J < p2.J){
+            return true;
+        }else{
+            return false;
+        }
+    }
+};
 
-void cross_entropy(const int trial,
+
+void cross_entropy(const std::string prefix,
+                   const int trial,
                    const int n,
                    Eigen::VectorXd& theta,// initial mean parameter vector
                    Eigen::MatrixXd& cov,  // initial nxn covariance matrix
@@ -29,42 +47,54 @@ void cross_entropy(const int trial,
                    const int E,
                    const int N,
                    double epsi,
-                   void (*evalFunc)(struct policy&, // policy
+                   void (*evalFunc)(std::fstream&,
+                                    struct policy&, // policy
                                     const int,      // number of episodes
-                                    const int,       // axis
-                                    const int
+                                    const int       // axis
                                     ));
 
-void hill_climbing(const int trial,
+void concurrent_sampling_population(std::fstream& fs,
+                                    std::mutex& m,
+                                    Eigen::EigenMultivariateNormal<double>& mvn,
+                                    std::priority_queue<struct policy, std::vector<struct policy>, policy_compare>& poque,
+                                    const int cnt,
+                                    const int K,
+                                    const int N,
+                                    const int i,
+                                    void (*evalFunc)(std::fstream&,
+                                                     struct policy& ,
+                                                     const int, // Number of episodes
+                                                     const int // for data dumping first column
+                                                     )
+                                    );
+
+void hill_climbing(const std::string prefix,
+                   const int trial,
                    const int n,
                    Eigen::VectorXd& theta,// Initial mean policy parameter vector
                    const double tau,      // Exploration parameter
                    const int N,            // Number of episodes to evaluate
-                   void (*evalFunc)(struct policy&,
-                                    const int,
+                   void (*evalFunc)(std::fstream&,
+                                    struct policy&,
                                     const int,
                                     const int)
                    );
 
-void eval_grid_policy(struct policy& po,
-                      const int num_episodes,
-                      const int axis,
-                      const int trial);
 
-void eval_cart_pole_policy(struct policy& po,
+
+void eval_cart_pole_policy(std::fstream& fs,
+                           struct policy& po,
                            const int num_episodes,
-                           const int axis,
-                           const int trial);
+                           const int axis);
 
-void save_data(const std::string prefix,
+void save_data(std::fstream& fs,
                const double J,
-               const int axis,
-               const int trial);
+               const int axis);
 
-void eval_grid_multithread(struct policy& po,
+void eval_grid_multithread(std::fstream& fs,
+                           struct policy& po,
                            const int num_episodes,
-                           const int axis,
-                           const int trial);
+                           const int axis);
 
 
 
