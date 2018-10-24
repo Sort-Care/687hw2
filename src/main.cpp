@@ -34,6 +34,33 @@
 
 int main(int argc, char *argv[]){
     generateInput();
+
+    if(argc == 0) {
+        printf("Enter some options to run the program:\nRandom policy: 1, \nOptimal:2,\nEstimate quantity:3");
+        return 0;
+    }else{
+        int option = std::stoi( argv[1] );
+        
+        switch(option){
+            case 1:
+                //======================== GRID WORLD =======================
+                run_cross_entropy_on_gridworld();
+                break;
+            case 2:
+                //========================== Cart Pole ========================
+                run_cross_entropy_on_cartpole();
+                break;
+            case 3:
+                run_FCHC_on_gridworld();
+                break;
+            case 4:
+                run_FCHC_on_cartpole();
+                break;
+            default:
+                printf("No matched option.\n");
+                
+        }
+    }
 //    run_simulation_with_strategy(simulate_random);
 
         //options: 1. Run Random, 2. Run optimal, 3, estimate quantity
@@ -79,28 +106,44 @@ int main(int argc, char *argv[]){
         // struct policy po = {r2, 0.0};
         // Eigen::MatrixXd res = grid_softmax(po, 4, 2);
         // std::cout<< res << std::endl;
-
-
+    
+        //===========================================================
+        //=======================      CE   =========================
+        //===========================================================
 
         //======================== GRID WORLD =======================
         //run_cross_entropy_on_gridworld();
     
 
         //========================== Cart Pole ========================
-        run_cross_entropy_on_cartpole();
-        
-    // int cart_size = 10;
-    // Eigen::VectorXd theta = Eigen::VectorXd::Zero(cart_size);
-    // Eigen::MatrixXd cov = Eigen::MatrixXd::Constant(cart_size,
-    //                                     cart_size,
-    //                                     0);
+        //run_cross_entropy_on_cartpole();
     
-    // Eigen::EigenMultivariateNormal<double> mvn(theta, cov);
-    // std::cout << mvn.samples(1) << std::endl;
 
-    // MVN mvn(theta, cov);
 
-    // std::cout << mvn.sample(100) << std::endl;
+        /*
+         *
+         *======================== FCHC ===============================
+         *
+         */
+        //run_FCHC_on_gridworld();
+
+
+        //run_FCHC_on_cartpole();
+    
+    
+        
+        // int cart_size = 10;
+        // Eigen::VectorXd theta = Eigen::VectorXd::Zero(cart_size);
+        // Eigen::MatrixXd cov = Eigen::MatrixXd::Constant(cart_size,
+        //                                     cart_size,
+        //                                     0);
+    
+        // Eigen::EigenMultivariateNormal<double> mvn(theta, cov);
+        // std::cout << mvn.samples(1) << std::endl;
+
+        // MVN mvn(theta, cov);
+
+        // std::cout << mvn.sample(100) << std::endl;
     
     
         //     // Calculate the mean and convariance of the produces sampled points

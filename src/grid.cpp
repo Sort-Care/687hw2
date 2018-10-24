@@ -465,7 +465,7 @@ void run_cross_entropy_on_gridworld(){
          * K = 20, E = 2, N = 10, epsi = 0.1
          */
     int K = 20;
-    int E = 4;
+    int E = 2;
     int N = 8;
     double epsi = 1.5;
         //std::cout << "episode" <<'\t' << "return" << std::endl;
@@ -486,6 +486,30 @@ void run_cross_entropy_on_gridworld(){
                                                               E,
                                                               N,
                                                               epsi,
+                                                              eval_grid_multithread);}));
+    }
+}
+
+void run_FCHC_on_gridworld(){
+    
+    int param_size = NUM_ACTION * STATE_NUM; // 92
+    
+    Eigen::VectorXd theta;
+
+    double tau = 2;
+    int N = 8;
+        //std::cout << "episode" <<'\t' << "return" << std::endl;
+    std::vector<std::future<void>> futures;
+    
+    REP (i, 0, 99){
+        theta = Eigen::VectorXd::Zero(param_size);
+        futures.push_back(std::async(std::launch::async,
+                                     [&]{return hill_climbing("GW",
+                                                              i,
+                                                              param_size,
+                                                              theta,
+                                                              tau,
+                                                              N,
                                                               eval_grid_multithread);}));
     }
 }

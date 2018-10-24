@@ -72,4 +72,6 @@ double run_gridworld_on_policy(struct policy& po);
 
 void run_cross_entropy_on_gridworld();
 
+void run_FCHC_on_gridworld();
+
 #endif

@@ -48,8 +48,12 @@ void cross_entropy(const std::string prefix,
     int cnt = 0;        // count the outer loop
 //    std::cout << "CE:" << std::endl;
     std::fstream fs;
-    std::string filename = prefix + std::to_string(trial);
+    std::string filename = prefix + "full";
     fs.open(filename, std::fstream::app);
+
+    std::string eliteFile = prefix + "elite";
+    std::fstream efs;
+    efs.open(eliteFile, std::fstream::app);
 
     Eigen::EigenMultivariateNormal<double> mvn(theta, cov);//initialize the multivariate normal distribution
         //note that the above structure will be changed later
@@ -61,30 +65,33 @@ void cross_entropy(const std::string prefix,
 
             // sample k policy parameter vectors
         Eigen::MatrixXd elite_param(n, E); // structure that holds elite population
-        std::vector<std::future<void>> futures;
+            //std::vector<std::future<void>> futures;
         REP (i, 0, K-1) {
-            futures.push_back(std::async(std::launch::async,
-                                         [&]{
-                                             return concurrent_sampling_population(std::ref(fs),
-                                                                                   pq_mutex,
-                                                                                   mvn,
-                                                                                   poque,
-                                                                                   cnt,
-                                                                                   K,
-                                                                                   N,
-                                                                                   i,
-                                                                                   evalFunc);
+            // futures.push_back(std::async(std::launch::async,
+            //                              [&]{
+            //                                  return concurrent_sampling_population(std::ref(fs),
+            //                                                                        pq_mutex,
+            //                                                                        mvn,
+            //                                                                        poque,
+            //                                                                        cnt,
+            //                                                                        K,
+            //                                                                        N,
+            //                                                                        i,
+            //                                                                        evalFunc);
                                              
-                                         }));
+                                         // }));
                 //sample one policy parameter vector
-                // struct policy tmp_po;
+                struct policy tmp_po;
             
-                // tmp_po.param = mvn.sample(1000);
-                //     //std::cout << "sampled" << tmp_po.param <<std::endl;
-                //     //evaluate the policy
-                // evalFunc(tmp_po, N, cnt*K*N + i*N, trial);
-                //     //push this policy into priority queue
-                // poque.push(tmp_po);
+                tmp_po.param = mvn.samples(1);
+                    //std::cout << "sampled" << tmp_po.param <<std::endl;
+                    //evaluate the policy
+                evalFunc(fs,
+                         tmp_po,
+                         N,
+                         cnt*K*N + i*N);
+                    //push this policy into priority queue
+                poque.push(tmp_po);
         }
             //sort according to their average discounted returns
             /*
@@ -93,14 +100,15 @@ void cross_entropy(const std::string prefix,
              */
 
             //summing over the first E elite and update the theta
-        for(auto& e : futures){
-            e.get();
-        }
+        // for(auto& e : futures){
+        //     e.get();
+        // }
         
         REP (i, 0, E-1){
             elite_param.col(i) = poque.top().param;
                 //std::cout<<"Elite reward: " << poque.top().J << std::endl;
                 //pop out the top element
+            efs << cnt * E + i << '\t' <<poque.top().J << '\n';
             poque.pop();
         }
         
@@ -116,6 +124,7 @@ void cross_entropy(const std::string prefix,
         cnt ++;
     }
     fs.close();
+    efs.close();
 
 }
 
@@ -135,11 +144,11 @@ void concurrent_sampling_population(std::fstream& fs,
                                     ){
     struct policy tmp_po;
     tmp_po.param = mvn.samples(1);
+    std::lock_guard<std::mutex> lock(m);
     evalFunc(fs,
              tmp_po,
              N,
              cnt * K * N + i * N);
-    std::lock_guard<std::mutex> lock(m);
     poque.push(tmp_po);
 }
 
@@ -155,11 +164,18 @@ void hill_climbing(const std::string prefix,
                                     const int,
                                     const int) // evaluate function
                    ){
-    int convergent = 0;
+    int convergent = 400;
+    int cnt = 0;
+    int picked = 0;
+    std::cout<< trial << std::endl;
     
     std::fstream fs;
-    auto filename = prefix + std::to_string(trial);
+    auto filename = prefix + "his";
     fs.open(filename, std::fstream::app);
+
+    std::fstream fpicked;
+    auto filename2 = prefix + "picked";
+    fpicked.open(filename2, std::fstream::app);
     
     policy best_policy = {theta, 0.0};
 
@@ -169,23 +185,32 @@ void hill_climbing(const std::string prefix,
              0);
     Eigen::EigenMultivariateNormal<double> mvn(theta, Eigen::MatrixXd::Identity(n,n) * tau);
 
-    while (convergent != 1){
-        
+    while (convergent != 0){
         policy tmp_po;
         tmp_po.param = mvn.samples(1);
         evalFunc(fs,
                  tmp_po,
                  N,
-                 0);// putting zero there just for now
+                 cnt);// putting zero there just for now
         
         if (tmp_po.J > best_policy.J){
             best_policy.param = tmp_po.param;
             best_policy.J = tmp_po.J;
+            fpicked << picked << '\t' << tmp_po.J << '\n';
+            picked++;
+            std::cout << cnt << std::endl;
+            
+            std::cout << "Better seen: "<< tmp_po.J << std::endl;
                 //update the distribution
             mvn.setMean(best_policy.param);
+            
         }
             //test convergence
+        convergent --;
+        cnt++;
     }
+    fs.close();
+    fpicked.close();
 
 }
 

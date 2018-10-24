@@ -1,13 +1,26 @@
 * Dependencies
 0. C++11
 1. Eigen
-2. CMake
+2. CMake(optional if no file added)
 
-* How to Run
-
+* Run directly
+Run the following:
 #+BEGIN_SRC bash
+cd build
+./hw2 [num]
+#+END_SRC
+where the number could be 1,2,3,4 and they are:
+1. CE - gridworld   (takes a while) 
+2. CE - cart pole   (should be fast)
+3. FCHC - gridworld (takes very long to run)
+4. FCHC - gridworld (faster than 3 but still takes a while)
+
+* or: Compile and Run
+If there are any problem running it, might need to regenerate a Makefile and compile again.
+#+BEGIN_SRC bash
+rm -r build/*
 cd build
 cmake ..
 make
-./hw2
+./hw2 [num]
 #+END_SRC

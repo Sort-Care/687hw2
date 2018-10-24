@@ -51,4 +51,7 @@ Eigen::MatrixXd cartpole_softmax(struct policy& po,
 
 void run_cross_entropy_on_cartpole();
 
+void run_FCHC_on_cartpole();
+
+
 #endif

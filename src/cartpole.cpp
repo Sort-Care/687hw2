@@ -163,18 +163,18 @@ void run_cross_entropy_on_cartpole(){
     int K = 15;
     int E = 1;
     int N = 1;
-    double epsi = 3;
+    double epsi = 2;
 
     std::vector<std::future<void>> futures;
-    REP(i, 0, 10){
+    REP(i, 0, 99){
         theta = Eigen::VectorXd::Zero(cart_size);
         cov = Eigen::MatrixXd::Constant(cart_size,
                                         cart_size,
-                                        0);
+                                        1);
 
         futures.push_back(std::async(std::launch::async,
                                      [&]{
-                                         return cross_entropy("CCE",
+                                         return cross_entropy("CCE2",
                                                               i,
                                                               cart_size,
                                                               theta,
@@ -219,4 +219,28 @@ Eigen::MatrixXd cartpole_softmax(struct policy& po,
         //replicate before division
     Eigen::MatrixXd repeat = col_mean.colwise().replicate(rows);
     return soft.array() / repeat.array();
+}
+
+
+void run_FCHC_on_cartpole(){
+    int cart_size = NUM_LR * NUM_BUCKETS; // 92
+    
+    Eigen::VectorXd theta;
+
+    double tau = 2;
+    int N = 1;
+        //std::cout << "episode" <<'\t' << "return" << std::endl;
+    std::vector<std::future<void>> futures;
+    
+    REP (i, 0, 499){
+        theta = Eigen::VectorXd::Zero(cart_size);
+        futures.push_back(std::async(std::launch::async,
+                                     [&]{return hill_climbing("CP",
+                                                              i,
+                                                              cart_size,
+                                                              theta,
+                                                              tau,
+                                                              N,
+                                                              eval_cart_pole_policy);}));
+    }
 }
